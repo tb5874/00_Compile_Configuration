@@ -1,46 +1,70 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 윈도우 사용법
 
-1. https://git-scm.com/download/win
+1.
+https://git-scm.com/download/win
 다운받고 전부 넥스트 눌러서 기본설치
 
-2. Git bash 찾아서 실행하기
-사용법은 리눅스 git과 동일
+2.
+Git bash 찾아서 실행하기
+*사용법은 리눅스 git과 동일
  
-3. 사용법
+3.
 https://github.com 에서 로그인하고 Repositories 만들기
 
-git clone https://github.com/tb5874/만든Repositories이름
-git config --global user.email "tb5874@naver.com"
-git add .
-git commit -m "블라블라"
-git push origin master
+4.
+작업할 폴더를 만들고 안에 들어가서 웹에서 만든 Repositories 를 다운받는다.
+Ex ) git clone https://github.com/tb5874/만든Repositories이름
+그러면 작업할 폴더 안에 Repositories 이름으로 폴더가 생성된다.
+ls -al 해보면 .git이 생겼다.
+.git 폴더에서 모든일이 일어나므로 절대 건드리지 않는다.
 
-한번 클론 한 이후, 업데이트 된 내용 받아오려면 다시 clone 할 필요 없이 해당 폴더 내부에서
+5.
+이름 등록 : git config --global user.name "TaeBin Heo"
+이메일 등록 : git config --global user.email tb5874@naver.com
+수정한 파일 추가 : git add .
+git commit -m "코멘트 입력"
+수정한 파일 등록 : git push origin master 또는 git push origin
+
+6.
+4번 이후, 업데이트 파일 받으려면 다시 clone 할 필요 없이 해당 폴더 내부에서
 git pull 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-자세한 명령어 모음
-	sudo apt-get install git
-	sudo add-apt-repository ppa:git-core/ppa
-	sudo apt update
-	sudo apt install git
-	저장소 만들기 : github에 로그인해서 repositories 만들기
+리눅스 사용법
 
-	mkdir ~/test_git && cd ~/test_git
-	*여기서 만드는 폴더명 test_git는 Git, Github어디에서도 사용되지 않는다.
-	그저 작업할 최상위 폴더를 만드는 행위이다.
+1.
+sudo apt-get install git
+sudo add-apt-repository ppa:git-core/ppa
+sudo apt update
+sudo apt install git
 
-	git clone https://github.com/tb5874/"아까 Github에서 만들은 저장소를 입력한다."
-		Ex : git clone https://github.com/tb5874/How_to_use_Git
+2.
+https://github.com 에서 로그인하고 Repositories 만들기
 
-	ls -al 해보면 .git이 생겼다.
-	.git 폴더에서 모든일이 일어나므로 절대 건드리지 않는다.
+3.
+작업할 폴더를 만들고 안에 들어가서 웹에서 만든 Repositories 를 다운받는다.
+그러면 작업할 폴더 안에 Repositories 이름으로 폴더가 생성된다.
+mkdir ~/test_git && cd ~/test_git
+Ex ) git clone https://github.com/tb5874/만든Repositories이름
+*여기서 만드는 폴더명 test_git은 Git, Github어디에서도 사용되지 않는다.
+*그저 작업할 최상위 폴더를 만드는 행위이다.
+ls -al 해보면 .git이 생겼다.
+.git 폴더에서 모든일이 일어나므로 절대 건드리지 않는다.
 
-	이름 등록 : git config --global user.name "TaeBin Heo"
-	이메일 등록 : git config --global user.email tb5874@naver.com
-	편집기 등록 : git config --global core.editor vi
-	리스트 확인 : git config --list
+4.
+이름 등록 : git config --global user.name "TaeBin Heo"
+이메일 등록 : git config --global user.email tb5874@naver.com
+편집기 등록 : git config --global core.editor vi
+리스트 확인 : git config --list
+
+수정한 파일 추가 : git add .
+
+git commit -m "코멘트 입력"
+수정한 파일 웹사이트에 등록 : git push origin master 또는 git push origin
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+[ 매우 자세한 사용법 ]
 	vi 1.txt
 	git add 1.txt
 		전체를 올리고 싶을때 git add .
