@@ -57,11 +57,13 @@ ls -al 해보면 .git이 생겼다.
 이메일 등록 : git config --global user.email tb5874@naver.com
 편집기 등록 : git config --global core.editor vi
 리스트 확인 : git config --list
-
 수정한 파일 추가 : git add .
-
 git commit -m "코멘트 입력"
 수정한 파일 웹사이트에 등록 : git push origin master 또는 git push origin
+
+5.
+3번 이후, 업데이트 파일 받으려면 다시 clone 할 필요 없이 해당 폴더 내부에서
+git pull 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 [ 매우 자세한 사용법 ]
