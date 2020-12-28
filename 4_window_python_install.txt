@@ -1,0 +1,17 @@
+1. 파이썬 다운로드
+https://www.python.org/downloads/windows/
+다운 받을때 x64인지 꼭 확인
+
+2. 파이썬 설치시
+Add python 3.8 to PATH 체크박스 클릭
+
+3. opencv 사용하기 위한 설정
+C:\opencv_4_2_0\opencv\build\python\cv2\python-3.8에 들어있는 
+cv2.cp38-win_amd64.pyd
+C:\opencv_4_2_0\opencv\build\x64\vc15\bin에 들어있는
+opencv_videoio_ffmpeg420_64.dll
+opencv_world420.dll
+C:\Users\stream\AppData\Local\Programs\Python\Python38\Lib\site-packages에 복사, 붙여넣기
+
+4.  파이썬 에서 필요한 추가 패키지는 cmd에서 pip를 통해 다운로드
+pip install numpy

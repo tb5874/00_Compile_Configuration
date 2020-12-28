@@ -1,0 +1,54 @@
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+명령어 모음
+
+폴더이동
+cd 시작단어 + tab
+
+상위 폴더 이동
+cd ..
+
+현재 폴더의 내용 전부 삭제
+rm -rf *
+
+지정 폴더 삭제
+rm -rf 폴더이름
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// 자동 재시작 .sh //
+#!/bin/bash
+test1=$(date +%s)
+test2=0
+while(true)
+do
+
+	ans=$(( test2 - test1 ))
+
+	if [ $ans -gt 3600 ];then
+	
+		ps -ef | grep x11vnc | grep -v grep | awk '{print $2}' | xargs kill
+		test1=$(date +%s)
+	fi
+
+	sleep 3
+        PC=`ps -ex|grep 'x11vnc'|grep -v grep |awk '{print $1}'`
+        if [ "$PC" == "" ];then
+
+                /etc/my_remote.sh
+
+        fi
+        sleep 3
+	test2=$(date +%s)
+done
+
+// 시간 측정 .sh //
+#!/bin/bash
+test1=$(date +%s)
+sleep 2
+test2=$(date +%s)
+ans=$(( test2 - test1 ))
+if [ $ans == 2 ];then
+
+        printf "hello"
+
+fi

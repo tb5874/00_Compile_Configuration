@@ -1,0 +1,84 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+윈도우 사용법
+
+1. https://git-scm.com/download/win
+다운받고 전부 넥스트 눌러서 기본설치
+
+2. Git bash 찾아서 실행하기
+사용법은 리눅스 git과 동일
+ 
+3. 사용법
+https://github.com 에서 로그인하고 Repositories 만들기
+
+git clone https://github.com/tb5874/만든Repositories이름
+git config --global user.email "tb5874@naver.com"
+git add .
+git commit -m "블라블라"
+git push origin master
+
+한번 클론 한 이후, 업데이트 된 내용 받아오려면 다시 clone 할 필요 없이 해당 폴더 내부에서
+git pull 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+자세한 명령어 모음
+	sudo apt-get install git
+	sudo add-apt-repository ppa:git-core/ppa
+	sudo apt update
+	sudo apt install git
+	저장소 만들기 : github에 로그인해서 repositories 만들기
+
+	mkdir ~/test_git && cd ~/test_git
+	*여기서 만드는 폴더명 test_git는 Git, Github어디에서도 사용되지 않는다.
+	그저 작업할 최상위 폴더를 만드는 행위이다.
+
+	git clone https://github.com/tb5874/"아까 Github에서 만들은 저장소를 입력한다."
+		Ex : git clone https://github.com/tb5874/How_to_use_Git
+
+	ls -al 해보면 .git이 생겼다.
+	.git 폴더에서 모든일이 일어나므로 절대 건드리지 않는다.
+
+	이름 등록 : git config --global user.name "TaeBin Heo"
+	이메일 등록 : git config --global user.email tb5874@naver.com
+	편집기 등록 : git config --global core.editor vi
+	리스트 확인 : git config --list
+	vi 1.txt
+	git add 1.txt
+		전체를 올리고 싶을때 git add .
+		전체를 올리는 와중에 무시하고 싶은 파일을 등록하려면
+		vi .gitignore 만들고
+		*.[oa] 입력 하면 *.o 나 *.a는 업로드 되지 않는다.
+	git status
+		버젼관리가 안되어 있는 1.txt가 확인된다.
+		Tracked / Untracked : tracked는 버전을 관리하고있는(스냅샷에 포함된) 파일, untracked는 접근이 없는 상태
+		Modified / Unmodified : tracked되는 기존 관리된 버전의 파일이 수정 됬는지 안됬는지 확인
+	git commit -m "1st commit"
+		버젼에 대한 주석을 넣는다.
+		자세하게 수정하고 싶을때는
+		git commit까지만 입력해서 내용을 자세하게 타이핑한다.
+	git commit --amend 파일명
+		git commit 할때 빼먹은 파일을 추가하는 방법이다.
+	git remote add origin https://github.com/tb5874/How_to_use_Git
+		이 주소에 해당하는 repository에 업로드한다.
+		수정하려면 git remote remove origin을 입력하고 다시 등록한다.
+	git remote -v 입력하면 방금 입력한 repository가 확인된다.
+	git push origin master
+		아이디와 비밀번호를 입력하면 업로드된다.
+	만약 push했을때 다른사람이 수정한것때문에 안올라간다면
+		git fetch를 입력하여 변경사항을 확인하고
+		다른 폴더로 이동해서 git pull로 내려받고
+		자신의 수정사항과 비교하고 다시 수정한뒤에
+		다시 git push origin master를 입력하여 올린다.
+	
+	버젼을 되돌리고 싶을때는
+	git log 입력해서 확인한다.
+	git log 해서 얻은 commit을 복사해서 붙여넣기 한다.
+	git checkout 4b5eb1270a0c1ad919434289890d3781fd4d9a8d
+		첫번째 버젼으로 돌아가게 해본다.
+	git checkout master
+		현재상태로 다시 돌아온다.
+
+	다른 사람의 Github에서 fork를 누르면 누른 시점의 코드가 Repository로 만들어진다.
+	상대방이 앞으로 수정한다고 해도 업데이트 되지 않는다.
+
+	새로운 폴더에서 몇개의 코드만 작업하고 업데이트 할때는
+	git init : 이 공간을 Git으로 사용하겠다는 선언하고 위의 내용을 반복한다.
