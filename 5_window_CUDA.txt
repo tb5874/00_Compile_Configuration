@@ -1,14 +1,18 @@
+https://docs.nvidia.com/cuda/cuda-c-programming-guide/
+https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/
+
 1.
 cudnn 다운로드
 https://developer.nvidia.com/rdp/cudnn-archive
 Download cuDNN v8.0.4 (September 28th, 2020), for CUDA 11.1
 
 2.
+cudnn이 지원하는 CUDA 다운로드
 CUDA 11.1 다운로드
 https://developer.nvidia.com/cuda-toolkit-archive
 CUDA Toolkit 11.1.0 (Sept 2020), Versioned Online Documentation
 https://docs.nvidia.com/cuda/archive/11.1.0/index.html
-(Last updated September 23, 2020)
+(Last updated September 23, 2020, 즉 설치한 cudnn보다 이전에 만들어진 Toolkit)
 
 https://en.wikipedia.org/wiki/CUDA#Version_features_and_specifications
 gtx 1080 -> Pascal -> Compute capability : 6.1
@@ -23,5 +27,92 @@ CUDA 11.1 GA -> Windows x86_64 Driver Version -> 그래픽 드라이버 456.38 �
 https://www.nvidia.com/download/index.aspx?lang=en-us
 
 4.
-https://docs.nvidia.com/cuda/cuda-c-programming-guide/
-https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/
+그래픽 드라이버 설치 (지포스 익스피리언스 제외)-> CUDA 설치(빠른설치 하지말고 지포스 익스피리언스 제외)
+CUDA 설치
+cuDNN 압축 해제
+cuDNN 에서 압축풀은 폴더와 같은 이름의 폴더 안에 파일 복사
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.1  
+
+5.
+솔루션 탐색기에서 sin 오른쪽 클릭 -> 빌드종속성 -> 사용자 지정 빌드 -> CUDA 11.1 체크 -> 확인
+도구 -> 옵션 -> 텍스트 편집기 -> 확장명에 cu 추가, cuh 추가
+도구 -> 옵션 -> C, C++ -> 추가 포함 디렉터리 $(CUDA_PATH)\include
+도구 -> 옵션 -> 링커 -> 일반 -> $(CUDA_PATH)\lib\x64
+도구 -> 옵션 -> 링커 -> 입력 -> 필요한 .lib 추가 예를들면 : cuda.lib, cudart.lib 등..
+
+6.
+소스파일에 test.cu 만들기 -> 오른쪽 클릭 -> 속성 -> 구성속성 -> 일반 -> 항목 형식 -> CUDA C/C++
+헤더파일에 test.cuh 만들기 -> 오른쪽 클릭 -> 속성 -> 구성속성 -> 일반 -> 항목 형식 -> 사용자 지정 빌드 도구
+
+7.
+next_day.cu 파일
+#include "next_day.cuh"
+#include "device_launch_parameters.h"
+#include <iostream>
+
+NextDay::NextDay(void)
+{
+}
+
+NextDay::~NextDay(void)
+{
+}
+
+__global__ void sum_kernel(int a, int b, int* c)
+{
+	int tid = blockIdx.x * blockDim.x + threadIdx.x;
+	c[tid] = a + b;
+}
+
+int NextDay::sum_cuda(int a, int b, int* c)
+{
+	int* f;
+	cudaMalloc((void**)&f, sizeof(int) * 1);
+	cudaMemcpy(f, c, sizeof(int)*1, cudaMemcpyHostToDevice);
+	sum_kernel << <1, 1 >> > (a, b, f);
+	
+	cudaMemcpy(c, f, sizeof(int) * 1, cudaMemcpyDeviceToHost);
+
+	cudaFree(f);
+
+	return 0;
+}
+
+8.
+next_day.cuh 파일
+#pragma once
+
+#include <cuda_runtime.h>
+
+#ifdef __cplusplus 
+extern "C" {
+#endif
+
+class NextDay
+{
+	public:
+		NextDay(void);
+		virtual ~NextDay(void);
+		int sum_cuda(int a, int b, int* c);
+};
+
+#ifdef __cplusplus 
+}
+#endif
+
+9. main.c 파일
+
+#include <iostream>
+#include "next_day.cuh"
+
+int main()
+{
+	int a = 1;
+	int b = 2;
+	int c = 0;
+	NextDay test_GPU;
+	test_GPU.sum_cuda(a,b,&c);
+	printf("CUDA RESULT [%d]\n", c);
+
+	return 0;
+}
