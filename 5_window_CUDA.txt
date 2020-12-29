@@ -1,0 +1,27 @@
+1.
+cudnn 다운로드
+https://developer.nvidia.com/rdp/cudnn-archive
+Download cuDNN v8.0.4 (September 28th, 2020), for CUDA 11.1
+
+2.
+CUDA 11.1 다운로드
+https://developer.nvidia.com/cuda-toolkit-archive
+CUDA Toolkit 11.1.0 (Sept 2020), Versioned Online Documentation
+https://docs.nvidia.com/cuda/archive/11.1.0/index.html
+(Last updated September 23, 2020)
+
+https://en.wikipedia.org/wiki/CUDA#Version_features_and_specifications
+gtx 1080 -> Pascal -> Compute capability : 6.1
+CUDA SDK 11.0 – 11.2 support for compute capability 3.5 ~ 8.6
+(Kepler (in part), Maxwell, Pascal, Volta, Turing, Ampere)[33] New data types: Bfloat16 and TF32 on third-generations Tensor Cores.[34]
+
+https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
+CUDA 11.1 GA -> Windows x86_64 Driver Version -> 그래픽 드라이버 456.38 이상
+
+3.
+그래픽 드라이버 다운로드
+https://www.nvidia.com/download/index.aspx?lang=en-us
+
+4.
+https://docs.nvidia.com/cuda/cuda-c-programming-guide/
+https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/
