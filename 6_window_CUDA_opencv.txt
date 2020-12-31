@@ -71,8 +71,17 @@ nvcc warning : The 'compute_35', 'compute_37', 'compute_50', 'sm_35', 'sm_37' an
 
 위와 같은 경고가 몇만개 이상 생성됨
 원인은 모름, cuda에 사용되는 하드웨어에 따라 생성되는 경고 같음
+cmake 시 cuda_arch_bin 에 6.1 이외의 것을 적어서 그런것으로 추측됨
 
-아까 cmake_install_prefix 에서 설정한 opencv451_install 폴더 안에 작업물이 생김
+gtx1080 : sm_61
+??개 : https://en.wikipedia.org/wiki/CUDA#Version_features_and_specifications
+pascal : GP100 : sm_60
+60개 : https://images.nvidia.com/content/pdf/tesla/whitepaper/pascal-architecture-whitepaper.pdf
+volta : xavier : sm_72
+72개 : https://developer.nvidia.com/blog/nvidia-jetson-agx-xavier-32-teraops-ai-robotics/
+나머지는 안맞는것이 많음, gtx 1080 은 왜 sm_61인지 모르겠음, sm_60 이후에 나왔으므로 단순한 버젼을 표기한것으로 생각됨
+
+빌드가 끝나면 cmake_install_prefix 에서 설정한 opencv451_install 폴더 안에 작업물이 생김
 
 8.
 opencv451_install 폴더를 이동
@@ -100,9 +109,27 @@ opencv_world451d.lib ( 디버그 모드로 테스트 할 때만 )
 visual studio 2019에서 컴파일 완료 후 .exe 파일 실행시 lib 포함하기 위해 환경변수 등록
 내컴퓨터 -> 고급 시스템 설정 -> 환경 변수 -> 시스템변수 -> Path -> 편집 -> 아래 경로 입력
 C:\lib_ver_100\opencv451_install\x64\vc16\bin
+반드시 재시작
 
-11.
+12.
+프로젝트의 오른쪽 클릭
+CUDA C/C++ -> Device -> Code Generation 
+자동으로 compute_52,sm_52로 잡혀있음
+compute_61, sm_61로 변경 (자신의 하드웨어에 맞는것으로)
+cmake 시 cuda_arch_bin 에 6.1 이외의 것이 적혀있어서 그런것으로 추측됨
+
+13.
+프로젝트의 오른쪽 클릭
+CUDA C/C++ -> 일반 -> Target Machine Platform -> x64로 변경
+(cmake에서 설정 하는 파트가 있을것으로 예상 됨, 아직 찾지 못함)
+
+
+14.
 비쥬얼 스튜디오 컴파일 모드를 [Debug or Release], [x64]인지 확인
+
+15.
+컴파일 시작
+
 
 99.
 메모

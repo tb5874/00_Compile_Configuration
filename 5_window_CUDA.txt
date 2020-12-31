@@ -42,6 +42,8 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.1
 
 6.
 소스파일에 test.cu 만들기 -> 오른쪽 클릭 -> 속성 -> 구성속성 -> 일반 -> 항목 형식 -> CUDA C/C++
+소스파일에 test.cu -> 오른쪽 클릭 -> 속성 -> 구성속성 -> CUDA C/C++ -> Common -> Target Machine Platform -> x64
+소스파일에 test.cu -> 오른쪽 클릭 -> 속성 -> 구성속성 -> CUDA C/C++ -> Device -> Code Generation -> compute_61,sm_61 (자신의 gpu 하드웨어에 맞는 설정을 입력 )
 헤더파일에 test.cuh 만들기 -> 오른쪽 클릭 -> 속성 -> 구성속성 -> 일반 -> 항목 형식 -> 사용자 지정 빌드 도구
 
 7.
