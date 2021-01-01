@@ -1,73 +1,97 @@
 출처 : https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#c-language-extensions
+출처 : https://www.sysnet.pe.kr/2/0/11481
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////
+[기본 구조]
+__global__ void udf_cuda_serach_start(char* buff)
+{
+}
+
+void udc_cuda_test::udf_cuda_search(char* udv_BufferAddress)
+{
+    char* udv_GpuCopy;
+    dim3 udv_grid(2, 3, 4);
+    dim3 udv_blocksize(2, 3, 4);
+
+    cudaMalloc((void**)&udv_GpuCopy, sizeof(char) * 1000);
+    cudaMemset(udv_GpuCopy, 0, sizeof(char) * 1000);
+
+    cudaMemcpy(udv_GpuCopy, udv_BufferAddress, sizeof(char) * 1000, cudaMemcpyHostToDevice);
+    udf_cuda_serach_start << < udv_grid, udv_blocksize >> > (udv_GpuCopy);
+    cudaMemcpy(udv_BufferAddress, udv_GpuCopy, sizeof(char) * 1000, cudaMemcpyDeviceToHost);
+
+    cudaFree(udv_GpuCopy);
+
+    return;
+}
+/////////////////////////////////////////////////////////////////////////
+[각 성분 최대값 확인 방법]
+cudaDeviceProp prop;
+int count = 0;
+cudaGetDeviceCount(&count);
+cudaGetDeviceProperties(&prop, i);
+printf("Max threads per block:  %d\n", prop.maxThreadsPerBlock);
+printf("Max grid dimensions:  (%d, %d, %d)\n", prop.maxGridSize[0], prop.maxGridSize[1], prop.maxGridSize[2]);
+printf("Max thread dimensions:  (%d, %d, %d)\n", prop.maxThreadsDim[0], prop.maxThreadsDim[1], prop.maxThreadsDim[2]);
+
+gtx 1080
+Max threads per block:  1024
+Max grid dimensions:  (2147483647, 65535, 65535)
+Max thread dimensions:  (1024, 1024, 64)
+/////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
 
 B. C++ Language Extensions
-[용어]
+어디서 수행되는지 or 어디서 호출하지 생각하면 이해가 쉽다.
+global : 전역변수 같은 느낌
+device : GPU = 실제 그래픽 카드 = gtx 1080
+host : 컴퓨터
+
 __global__
 __device__
 __host__
 __device__ __host__
-(어디서 수행되는지 or 어디서 호출하지 생각하면 이해가 쉽다.)
-(device : GPU = 실제 그래픽 카드 = gtx 1080 )
-(host : 컴퓨터 )
 
-[함수 일 때]
+[함수 앞에 선언될 때]
 __global__
 일반 함수처럼 컴퓨터가 호출 가능, 수행은 device에서 함
-device 에서 호출이 가능하긴 한데 compute capability 3.2 이상이면 된다고 함
-(참조 : CUDA Dynamic Parallelism for more details).
+compute capability 3.2 이상일때 device 에서도 호출이 가능하다곤 함 (참조 : CUDA Dynamic Parallelism for more details).
 클래스에 포함 될 수 없음
 리턴은 항상 void 형태여야 함
-B.32. Execution Configuration 형식에 맞게 호출해야 함
-즉, device에서 수행되는 함수에 사용되는 block과 grid의 차원을 넣어줘야 함
-<<< Dg, Db, Ns, S >>> 형태로 쓰임
-자세한 설명 : https://www.sysnet.pe.kr/2/0/11481
-
-Dg 는 dim3
-unsigned int, (x,y,z) 3개의 변수를 지니는 구조체다
-This type is an integer vector type based on uint3 that is used to specify dimensions.
-When defining a variable of type dim3, any component left unspecified is initialized to 1.
-Dg 는 block의 수,
-Db 는 thread의 수를 뜻함
-
-///////////////////////////////////////////////////////////////////////////////////////
-Ex )
-__global__ void udf_real_cuda_sum(int a, int b, int* c)
-{
-	int tid = blockIdx.x * blockDim.x + threadIdx.x;
-	c[tid] = a + b;
-}
-
-int udc_cuda_test::udf_cuda_sum(int a, int b, int* c)
-{
-	int* f;
-	cudaMalloc((void**)&f, sizeof(int) * 1);
-	cudaMemcpy(f, c, sizeof(int)*1, cudaMemcpyHostToDevice);
-	udf_real_cuda_sum <<<1, 1>>> (a, b, f);
-	
-	cudaMemcpy(c, f, sizeof(int) * 1, cudaMemcpyDeviceToHost);
-
-	cudaFree(f);
-
-	return 0;
-}
-///////////////////////////////////////////////////////////////////////////////////////
-
+B.32. Execution Configuration 형식에 맞게 호출해야 함.
+즉, device가 수행되는 함수에 사용되는, block과 grid의 차원을 지정해서 호출해야 함 (grid는 여러개의 block으로 이뤄짐)
+코드상에서 <<< Dg, Db, Ns, S >>> 형식으로 사용한다.
+비동기식이라 __global__로 지정한 함수가, device에 연산을 맡기고, device의 연산 수행이 끝나기 전에, 먼저 완료 될 수 있음
+참고
 static 변수 가질 수 없음
-host와 device 간의 메모리 읽고 쓰기는 API 함수를 통해 일어나기 때문이라고 함 ( ? 무슨말인지 모르겠음 )
-__global__ __host__와 같은 용법으로 쓰일 수 없음 ( ? 무슨말인지 모르겠음 )
-공유 메모리를 이용하며 256 바이트까지의 인수를 사용할 수 있음 ( ? 무슨말인지 모르겠음 )
-아래처럼 가변형 인수 int a, int b, int *f 가질 수 없음 ( ? 무슨 말인지 모르겠음 )
-Ex )udf_real_cuda_sum <<<1, 1 >>> (int a, int b, int *f);
 
 __device__
-컴퓨터가 호출 불가, device만 호출 가능
+device에서 연산됨.
+컴퓨터가 호출 불가, device만 호출 가능.
 즉, __global__ 로 선언된 함수 안에 작성해야 함
+참고
 static 변수 가질 수 없음
-가변형 인수 가질 수 없음 ( ? 무슨 말인지 모르겠음 )
 
 __host__
-일반적으로 작성하는 함수앞에 생략되어있다고 보면 됨
-즉, 아래 두 함수는 같음
+일반적으로 작성하는 함수같은것.
+구분을 하기 위해 만든것같음
 int main()
 {
 	return 0;
@@ -83,13 +107,129 @@ host와 device 양쪽에서 모두 사용할 수 있는 함수
 하지만 host에서 호출하면 host가 연산하고
 device가 호출하면 device가 연산한다.
 host에서 호출했다고 device가 연산하는것은 아니다.
+아래처럼 사용 할 수있다. 
+해석하면 host에서는 __CUDA_ARCH__ 가 선언되어있지 않아서
+#elif !defined(__CUDA_ARCH__) 로 빠지고 device는 선언되어있으니까 해당 란에 함수를 작성하란 뜻
+
+__host__ __device__ ex_func()
+{
+#if __CUDA_ARCH__ >= 800
+   // Device code path for compute capability 8.x
+#elif __CUDA_ARCH__ >= 700
+   // Device code path for compute capability 7.x
+#elif __CUDA_ARCH__ >= 600
+   // Device code path for compute capability 6.x
+#elif __CUDA_ARCH__ >= 500
+   // Device code path for compute capability 5.x
+#elif __CUDA_ARCH__ >= 300
+   // Device code path for compute capability 3.x
+#elif !defined(__CUDA_ARCH__) 
+   // Host code path
+#endif
+}
 
 
-
-
-[변수 일 때]
+[변수 앞에 선언될 때]
 __device__
 전역변수처럼 할당됨.
 프로그램이 종료될 때까지 유효함
 모든 thread가 접근할 수 있고, 컴퓨터는 API 함수를 통해 읽기와 쓰기가 가능
 
+
+
+
+
+
+[Dg]
+변수 앞에 dim3 으로 선언해서 입력가능 (dim3 는 unsigned int 이며 (x,y,z) 3개의 변수를 지님)
+dim3 udv_grid(2, 3, 4); 이면 3차원
+dim3 udv_grid(2, 3); 이면 2차원
+dim3 udv_grid(2); 이면 1차원
+udv_grid 는 결국 총 block의 개수와 같다.
+udv_grid(2, 3, 4)는 block 24개와 같다.
+udv_grid(2)는 1차원이니까 block 2개.
+/////////////////////////////////////////////////////////////////////////
+[예시]
+__global__ void udf_cuda_serach_start(char* buff)
+{
+
+}
+
+void udc_cuda_test::udf_cuda_search(char* udv_BufferAddress)
+{
+    char* udv_GpuCopy;
+    dim3 udv_grid(2, 3, 4);
+
+    cudaMalloc((void**)&udv_GpuCopy, sizeof(char) * 1000);
+    cudaMemset(udv_GpuCopy, 0, sizeof(char) * 1000);
+
+    cudaMemcpy(udv_GpuCopy, udv_BufferAddress, sizeof(char) * 1000, cudaMemcpyHostToDevice);
+    udf_cuda_serach_start << < udv_grid, 1 >> > (udv_GpuCopy);
+    // 1 차원일때는 udf_cuda_serach_start <<<2, 1>>> (udv_GpuCopy); 이렇게 입력해도 된다.
+    cudaMemcpy(udv_BufferAddress, udv_GpuCopy, sizeof(char) * 1000, cudaMemcpyDeviceToHost);
+
+    return;
+}
+
+/////////////////////////////////////////////////////////////////////////
+// 해석 //
+udf_cuda_serach_start <<<2, 1>>> (udv_GpuCopy); 를 예로 든다.
+block은 총 2개 할당됨
+blcok이 2개 이므로 blockIdx.x 는 0 부터 1의 숫자를 가지게 된다.
+즉 udf_real_cuda_sum 이 함수가 2번 호출된다.
+0이 먼저 호출 될지 1이 먼저 호출 될지는 모른다. 쓰레드처럼 병렬로 연산 시작한다.
+/////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+[Db]
+변수 앞에 dim3 으로 선언해서 입력가능 (dim3 는 unsigned int 이며 (x,y,z) 3개의 변수를 지님)
+dim3 udv_blocksize(2, 3, 4); 이면 3차원
+dim3 udv_blocksize(2, 3); 이면 2차원
+dim3 udv_blocksize(2); 이면 1차원
+말 그대로 블럭의 사이즈이며 1 블럭당 수행되는 쓰레드의 수 를 뜻한다.
+/////////////////////////////////////////////////////////////////////////
+[예시]
+__global__ void udf_cuda_serach_start(char* buff)
+{
+
+}
+
+void udc_cuda_test::udf_cuda_search(char* udv_BufferAddress)
+{
+    char* udv_GpuCopy;
+    dim3 udv_blocksize(2, 3, 4);
+
+    cudaMalloc((void**)&udv_GpuCopy, sizeof(char) * 1000);
+    cudaMemset(udv_GpuCopy, 0, sizeof(char) * 1000);
+
+    cudaMemcpy(udv_GpuCopy, udv_BufferAddress, sizeof(char) * 1000, cudaMemcpyHostToDevice);
+    udf_cuda_serach_start << < 1, udv_blocksize >> > (udv_GpuCopy);
+    cudaMemcpy(udv_BufferAddress, udv_GpuCopy, sizeof(char) * 1000, cudaMemcpyDeviceToHost);
+
+    cudaFree(udv_GpuCopy);
+
+    return;
+}
+/////////////////////////////////////////////////////////////////////////
+// 해석 //
+udf_cuda_serach_start <<<1, 6>>> (udv_GpuCopy); 를 예로 든다.
+block 1개에 6개의 쓰레드가 할당됨
+threadIdx.x 는 6개이므로 0 부터 5의 숫자를 가지게 된다.
+즉 udf_real_cuda_sum 이 함수가 동시에 6번 호출된다.
+/////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+// 메모 //
+1. cuda에 memcopy 시키지 않고 숫자만 던져서 cuda 내부에서 연산하고 밖으로 던지는 방법으로 짜기
+컴퓨터에서 얻은 메모리를 cuda에 memcopy 하는데 시간이 아까움
